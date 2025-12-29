@@ -3,236 +3,137 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="theme-color" content="#0a0a0a">
-    <title>AI Assistant • DV</title>
-    <meta name="description" content="A professional, ultra-fast AI chat platform for productive conversations. Powered by advanced models for insightful responses.">
+    <title>AI Assistant • Premium Chat</title>
+    <meta name="description" content="A clean, fast, professional AI chat experience – inspired by ChatGPT & Grok.">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/markdown-it@14.1.0/dist/markdown-it.min.js"></script>
     <style>
         :root {
-            --bg-primary: #0f0f0f;
-            --bg-secondary: #171717;
-            --bg-tertiary: #1f1f1f;
-            --text-primary: #f0f0f0;
-            --text-secondary: #a0a0a0;
-            --accent: #00ff9d;
-            --accent-glow: rgba(0, 255, 157, 0.3);
-            --user-bubble: linear-gradient(135deg, #238636, #00ff9d);
-            --ai-bubble: #1e1e1e;
-            --border: #2d2d2d;
-            --shadow: rgba(0,0,0,0.5);
+            --bg: #0d1117;
+            --header-bg: #161b22;
+            --chat-bg: #0d1117;
+            --text: #f0f8ff;
+            --text-secondary: #8b949e;
+            --user-bubble: #238636;
+            --ai-bubble: #21262d;
+            --accent: #58a6ff;
+            --border: #30363d;
         }
         [data-theme="light"] {
-            --bg-primary: #ffffff;
-            --bg-secondary: #f8f9fa;
-            --bg-tertiary: #e9ecef;
-            --text-primary: #212529;
-            --text-secondary: #6c757d;
-            --accent: #00cc7a;
-            --accent-glow: rgba(0, 204, 122, 0.3);
-            --user-bubble: linear-gradient(135deg, #0969da, #00cc7a);
-            --ai-bubble: #f1f3f5;
-            --border: #dee2e6;
-            --shadow: rgba(0,0,0,0.1);
+            --bg: #ffffff;
+            --header-bg: #f6f8fa;
+            --chat-bg: #ffffff;
+            --text: #24292f;
+            --text-secondary: #57606a;
+            --user-bubble: #2ea44f;
+            --ai-bubble: #f6f8fa;
+            --accent: #0969da;
+            --border: #d0d7de;
         }
-        body { background: var(--bg-primary); color: var(--text-primary); min-height: 100vh; margin: 0; font-family: 'Inter', system-ui, -apple-system, sans-serif; display: flex; flex-direction: column; transition: background 0.4s ease; }
-        .app-container { display: flex; flex: 1; height: 100vh; overflow: hidden; }
-        #sidebar { width: 300px; background: var(--bg-secondary); border-right: 1px solid var(--border); padding: 1.5rem; display: flex; flex-direction: column; transition: width 0.3s ease; box-shadow: 4px 0 30px var(--shadow); }
-        #sidebar.collapsed { width: 0; padding: 0; overflow: hidden; }
-        .sidebar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
-        .sidebar-header h2 { font-size: 1.3rem; margin: 0; font-weight: 600; }
-        #sidebar-toggle { background: none; border: none; color: var(--text-primary); font-size: 1.4rem; cursor: pointer; padding: 0.5rem; border-radius: 50%; transition: background 0.2s; }
-        #sidebar-toggle:hover { background: var(--accent-glow); }
-        #search-history { width: 100%; padding: 0.8rem 1rem; border: 1px solid var(--border); border-radius: 12px; background: var(--bg-tertiary); color: var(--text-primary); margin-bottom: 1rem; font-size: 0.95rem; }
-        #history-list { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 0.6rem; }
-        .history-item { background: var(--bg-tertiary); padding: 0.9rem 1rem; border-radius: 14px; cursor: pointer; transition: all 0.2s; font-size: 0.95rem; }
-        .history-item:hover { background: var(--accent-glow); transform: translateY(-2px); }
-        .history-item.active { border: 2px solid var(--accent); background: var(--accent-glow); }
-        .sidebar-actions { display: flex; gap: 1rem; margin-top: 1rem; }
-        .sidebar-actions button { flex: 1; background: var(--bg-tertiary); border: none; color: var(--text-primary); padding: 0.8rem; border-radius: 12px; cursor: pointer; font-size: 0.9rem; transition: background 0.2s; }
-        .sidebar-actions button:hover { background: var(--accent-glow); }
-        .main-content { flex: 1; display: flex; flex-direction: column; }
-        header { background: var(--bg-secondary); border-bottom: 1px solid var(--border); padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 20px var(--shadow); }
-        h1 { font-size: 1.8rem; font-weight: 700; margin: 0; background: linear-gradient(90deg, var(--accent), #00ccff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .header-actions button { background: var(--bg-tertiary); border: 1px solid var(--border); color: var(--text-primary); padding: 0.6rem 1.2rem; border-radius: 12px; cursor: pointer; font-size: 0.95rem; transition: all 0.2s; }
-        .header-actions button:hover { background: var(--accent-glow); border-color: var(--accent); }
-        #chat-container { flex: 1; overflow-y: auto; padding: 2rem; display: flex; flex-direction: column; gap: 2rem; background: var(--bg-primary); }
-        .message { display: flex; gap: 1.2rem; max-width: 80%; align-self: flex-start; animation: fadeIn 0.5s ease; }
-        .message.user { align-self: flex-end; flex-direction: row-reverse; }
-        .avatar { width: 46px; height: 46px; border-radius: 50%; background: var(--accent); display: flex; align-items: center; justify-content: center; font-weight: bold; color: #000; flex-shrink: 0; box-shadow: 0 0 20px var(--accent-glow); }
-        .user .avatar { background: linear-gradient(135deg, #0969da, var(--accent)); color: white; }
-        .bubble { background: var(--ai-bubble); padding: 1.3rem 1.8rem; border-radius: 24px; border-bottom-left-radius: 6px; box-shadow: 0 6px 25px var(--shadow); position: relative; font-size: 1rem; line-height: 1.6; }
-        .user .bubble { background: var(--user-bubble); color: white; border-bottom-right-radius: 6px; border-bottom-left-radius: 24px; }
-        .ai .bubble { border-bottom-left-radius: 6px; }
-        .message-actions { opacity: 0; transition: opacity 0.3s; margin-top: 0.8rem; display: flex; gap: 1rem; }
-        .message:hover .message-actions { opacity: 1; }
-        .message-actions button { background: none; border: none; color: var(--text-secondary); font-size: 1.2rem; cursor: pointer; transition: color 0.2s; }
+        body { background: var(--bg); color: var(--text); min-height: 100vh; margin: 0; font-family: system-ui, -apple-system, sans-serif; display: flex; flex-direction: column; }
+        header { background: var(--header-bg); border-bottom: 1px solid var(--border); padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; }
+        h1 { font-size: 1.6rem; font-weight: 600; margin: 0; }
+        .header-actions { display: flex; gap: 1rem; align-items: center; }
+        .header-actions button { background: none; border: none; color: var(--text); font-size: 1.4rem; cursor: pointer; padding: 0.5rem; border-radius: 50%; transition: background 0.2s; }
+        .header-actions button:hover { background: var(--accent)20; }
+        #new-chat-btn { background: var(--bg-tertiary); border: 1px solid var(--border); padding: 0.5rem 1rem; border-radius: 8px; font-size: 0.95rem; }
+        #chat-container { flex: 1; overflow-y: auto; padding: 2rem; display: flex; flex-direction: column; gap: 1.5rem; max-width: 800px; margin: 0 auto; width: 100%; }
+        .message { display: flex; gap: 1rem; max-width: 100%; animation: fadeIn 0.4s ease; }
+        .message.user { justify-content: flex-end; }
+        .bubble { padding: 1rem 1.5rem; border-radius: 18px; max-width: 80%; line-height: 1.6; }
+        .user .bubble { background: var(--user-bubble); color: white; border-bottom-right-radius: 4px; }
+        .ai .bubble { background: var(--ai-bubble); border: 1px solid var(--border); border-bottom-left-radius: 4px; }
+        .message-actions { margin-top: 0.5rem; opacity: 0; transition: opacity 0.3s; display: flex; gap: 1rem; }
+        .ai:hover .message-actions { opacity: 1; }
+        .message-actions button { background: none; border: none; color: var(--text-secondary); cursor: pointer; font-size: 1.1rem; }
         .message-actions button:hover { color: var(--accent); }
-        #input-container { background: var(--bg-secondary); border-top: 1px solid var(--border); padding: 1.2rem 2rem; box-shadow: 0 -4px 20px var(--shadow); }
-        #input-area { display: flex; align-items: flex-end; gap: 1rem; background: var(--bg-tertiary); border-radius: 32px; padding: 1rem 1.5rem; border: 1px solid var(--border); box-shadow: 0 6px 25px var(--shadow); max-width: 1000px; margin: 0 auto; }
-        #user-input { flex: 1; background: transparent; border: none; outline: none; color: var(--text-primary); font-size: 1.1rem; resize: none; max-height: 150px; overflow-y: auto; line-height: 1.5; }
-        #voice-btn { background: none; border: none; color: var(--text-secondary); font-size: 1.4rem; cursor: pointer; padding: 0.5rem; border-radius: 50%; transition: background 0.2s; }
-        #voice-btn:hover { background: var(--accent-glow); color: var(--accent); }
-        #send-btn, #stop-btn { background: var(--accent); color: #000; border: none; width: 52px; height: 52px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; transition: all 0.3s; box-shadow: 0 0 20px var(--accent-glow); }
-        #send-btn:hover, #stop-btn:hover { transform: scale(1.1); box-shadow: 0 0 30px var(--accent-glow); }
-        #stop-btn { background: #ff4444; display: none; }
-        .typing-indicator { display: flex; gap: 0.7rem; padding: 1rem 0; }
-        .dot { width: 12px; height: 12px; background: var(--accent); border-radius: 50%; animation: typing 1.5s infinite; box-shadow: 0 0 12px var(--accent-glow); }
+        #input-container { background: var(--header-bg); border-top: 1px solid var(--border); padding: 1rem 2rem; }
+        #input-area { max-width: 800px; margin: 0 auto; display: flex; align-items: flex-end; gap: 1rem; background: var(--bg-tertiary); border-radius: 24px; padding: 0.8rem 1.2rem; border: 1px solid var(--border); }
+        #user-input { flex: 1; background: transparent; border: none; outline: none; color: var(--text); font-size: 1.1rem; resize: none; max-height: 200px; overflow-y: auto; line-height: 1.5; }
+        #send-btn, #stop-btn { background: var(--accent); color: white; border: none; width: 44px; height: 44px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; }
+        #stop-btn { background: #da3633; display: none; }
+        .typing-indicator { display: flex; gap: 0.5rem; }
+        .dot { width: 8px; height: 8px; background: var(--text-secondary); border-radius: 50%; animation: bounce 1.4s infinite; }
         .dot:nth-child(2) { animation-delay: 0.2s; }
         .dot:nth-child(3) { animation-delay: 0.4s; }
-        @keyframes typing { 0%, 100% { opacity: 0.5; transform: translateY(0); } 50% { opacity: 1; transform: translateY(-12px); } }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-        pre { background: #000; color: var(--accent); padding: 1.2rem; border-radius: 14px; overflow-x: auto; border: 1px solid var(--border); }
-        code { background: rgba(0,255,157,0.15); padding: 0.3rem 0.6rem; border-radius: 8px; }
-        .model-info { font-size: 0.85rem; color: var(--text-secondary); margin-top: 0.8rem; font-style: italic; }
-        @media (max-width: 992px) {
-            #sidebar { position: absolute; left: 0; top: 0; height: 100%; z-index: 100; }
-            #sidebar:not(.collapsed) { width: 300px; }
-            .main-content { margin-left: 0; }
-        }
+        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        pre { background: #161b22; color: #f0f8ff; padding: 1rem; border-radius: 8px; overflow-x: auto; border: 1px solid var(--border); }
+        code { background: rgba(88,166,255,0.2); padding: 0.2rem 0.5rem; border-radius: 4px; }
+        .model-info { font-size: 0.85rem; color: var(--text-secondary); margin-top: 0.5rem; }
         @media (max-width: 768px) {
-            #chat-container { padding: 1.5rem; gap: 1.5rem; }
-            .message { max-width: 95%; }
-            #input-area { padding: 0.8rem 1rem; }
+            header, #input-container { padding: 1rem; }
+            #chat-container { padding: 1rem; }
+            .bubble { max-width: 90%; }
         }
     </style>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="app-container">
-        <div id="sidebar" class="collapsed">
-            <div class="sidebar-header">
-                <h2>Chat History</h2>
-                <button id="sidebar-toggle"><i class="fas fa-chevron-left"></i></button>
-            </div>
-            <input type="text" id="search-history" placeholder="Search chats...">
-            <div id="history-list"></div>
-            <div class="sidebar-actions">
-                <button id="export-btn"><i class="fas fa-download me-2"></i>Export</button>
-                <button id="share-btn"><i class="fas fa-share-alt me-2"></i>Share</button>
-            </div>
+    <header>
+        <h1>AI Assistant</h1>
+        <div class="header-actions">
+            <button id="new-chat-btn">New Chat</button>
+            <button id="theme-toggle" title="Toggle Theme"><i class="fas fa-moon"></i></button>
         </div>
+    </header>
 
-        <div class="main-content">
-            <header>
-                <h1>AI Assistant</h1>
-                <div class="header-actions">
-                    <button id="new-chat">New Chat</button>
-                    <button id="theme-toggle"><i class="fas fa-moon"></i></button>
-                </div>
-            </header>
+    <div id="chat-container"></div>
 
-            <div id="chat-container"></div>
-
-            <div id="input-container">
-                <div id="input-area">
-                    <button id="voice-btn" title="Voice Input"><i class="fas fa-microphone"></i></button>
-                    <textarea id="user-input" placeholder="Ask me anything..." rows="1"></textarea>
-                    <button id="stop-btn"><i class="fas fa-stop"></i></button>
-                    <button id="send-btn"><i class="fas fa-paper-plane"></i></button>
-                </div>
-            </div>
+    <div id="input-container">
+        <div id="input-area">
+            <textarea id="user-input" placeholder="Send a message..." rows="1"></textarea>
+            <button id="stop-btn"><i class="fas fa-stop"></i></button>
+            <button id="send-btn"><i class="fas fa-paper-plane"></i></button>
         </div>
     </div>
 
     <script>
-        const md = markdownit({ html: true, breaks: true, linkify: true, typographer: true });
+        const md = markdownit({ html: true, breaks: true, linkify: true });
 
         const chatContainer = document.getElementById('chat-container');
         const userInput = document.getElementById('user-input');
         const sendBtn = document.getElementById('send-btn');
         const stopBtn = document.getElementById('stop-btn');
-        const modelSelect = document.getElementById('model-select');
         const themeToggle = document.getElementById('theme-toggle');
-        const newChatBtn = document.getElementById('new-chat');
-        const voiceBtn = document.getElementById('voice-btn');
-        const searchHistory = document.getElementById('search-history');
-        const historyList = document.getElementById('history-list');
-        const exportBtn = document.getElementById('export-btn');
-        const shareBtn = document.getElementById('share-btn');
-        const sidebar = document.getElementById('sidebar');
-        const sidebarToggle = document.getElementById('sidebar-toggle');
+        const newChatBtn = document.getElementById('new-chat-btn');
         const BACKEND_URL = '/chat';
 
-        let conversationHistory = JSON.parse(localStorage.getItem('aiPremiumChatHistory')) || [];
-        let allChats = JSON.parse(localStorage.getItem('allChats')) || [{ id: 0, title: 'New Chat', history: conversationHistory }];
-        let currentChatId = 0;
+        let conversationHistory = JSON.parse(localStorage.getItem('simpleChatHistory')) || [];
         let currentController = null;
-        let currentAiMsg = null;
-        let recognition = null;
 
-        // Theme handling
-        const savedTheme = localStorage.getItem('aiTheme');
-        const systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-        const currentTheme = savedTheme || (systemDark ? 'dark' : 'light');
-        document.documentElement.dataset.theme = currentTheme;
-        themeToggle.innerHTML = currentTheme === 'dark' ? '<i class="fas fa-moon"></i>' : '<i class="fas fa-sun"></i>';
+        // Theme
+        const savedTheme = localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        document.documentElement.dataset.theme = savedTheme;
+        themeToggle.innerHTML = savedTheme === 'dark' ? '<i class="fas fa-moon"></i>' : '<i class="fas fa-sun"></i>';
 
-        // Load current chat
-        loadChat(currentChatId);
+        // Load history
+        conversationHistory.forEach(msg => addMessage(msg.role, msg.content));
 
-        // Sidebar toggle
-        sidebarToggle.onclick = () => {
-            sidebar.classList.toggle('collapsed');
-            sidebarToggle.innerHTML = sidebar.classList.contains('collapsed') ? '<i class="fas fa-chevron-right"></i>' : '<i class="fas fa-chevron-left"></i>';
-        };
-
-        // History search
-        searchHistory.addEventListener('input', () => {
-            const query = searchHistory.value.toLowerCase();
-            renderHistory(allChats.filter(chat => chat.title.toLowerCase().includes(query)));
-        });
-
-        // Render history
-        function renderHistory(chats) {
-            historyList.innerHTML = '';
-            chats.forEach(chat => {
-                const item = document.createElement('div');
-                item.classList.add('history-item');
-                if (chat.id === currentChatId) item.classList.add('active');
-                item.textContent = chat.title || `Chat ${chat.id + 1}`;
-                item.onclick = () => loadChat(chat.id);
-                historyList.appendChild(item);
-            });
-        }
-        renderHistory(allChats);
-
-        function addMessage(role, content, animate = true) {
-            const msgDiv = document.createElement('div');
-            msgDiv.classList.add('message', role);
-            if (animate) msgDiv.style.animation = 'fadeIn 0.5s ease';
-
-            const avatarText = role === 'user' ? 'You' : 'AI';
-            const modelInfo = role === 'assistant' ? `<div class="model-info">Model: ${modelSelect.options[modelSelect.selectedIndex].text}</div>` : '';
-
-            msgDiv.innerHTML = `
-                <div class="avatar">${avatarText}</div>
+        function addMessage(role, content) {
+            const div = document.createElement('div');
+            div.classList.add('message', role);
+            div.innerHTML = `
                 <div class="bubble">
                     ${role === 'assistant' ? md.render(content) : content.replace(/\n/g, '<br>')}
-                    ${modelInfo}
                 </div>
                 ${role === 'assistant' ? `
                 <div class="message-actions">
-                    <button title="Thumbs Up"><i class="fas fa-thumbs-up"></i></button>
-                    <button title="Thumbs Down"><i class="fas fa-thumbs-down"></i></button>
                     <button title="Copy"><i class="fas fa-copy"></i></button>
                     <button title="Regenerate"><i class="fas fa-redo"></i></button>
                 </div>` : ''}
             `;
-            chatContainer.appendChild(msgDiv);
+            chatContainer.appendChild(div);
             chatContainer.scrollTop = chatContainer.scrollHeight;
 
             if (role === 'assistant') {
-                msgDiv.querySelector('.fa-thumbs-up').onclick = () => alert('Thank you for the positive feedback!');
-                msgDiv.querySelector('.fa-thumbs-down').onclick = () => alert('Sorry, I'll improve next time.');
-                msgDiv.querySelector('.fa-copy').onclick = () => {
+                div.querySelector('.fa-copy').onclick = () => {
                     navigator.clipboard.writeText(content);
-                    alert('Response copied to clipboard!');
+                    alert('Copied!');
                 };
-                msgDiv.querySelector('.fa-redo').onclick = regenerateLast;
+                div.querySelector('.fa-redo').onclick = regenerateLast;
             }
-            return msgDiv;
+            return div;
         }
 
         async function sendMessage() {
@@ -249,40 +150,35 @@
             stopBtn.style.display = 'flex';
             sendBtn.style.display = 'none';
 
-            currentAiMsg = addMessage('assistant', '');
-            const bubble = currentAiMsg.querySelector('.bubble');
+            const aiMsg = addMessage('assistant', '');
+            const bubble = aiMsg.querySelector('.bubble');
             bubble.innerHTML = '<div class="typing-indicator"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>';
 
-            let aiReply = '';
-
+            let reply = '';
             try {
                 currentController = new AbortController();
-                const response = await fetch(BACKEND_URL, {
+                const res = await fetch(BACKEND_URL, {
                     method: 'POST',
                     signal: currentController.signal,
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        messages: [{ role: 'system', content: 'You are a highly intelligent, helpful, and professional AI assistant. Respond clearly, concisely, and insightfully.' }, ...conversationHistory],
-                        model: modelSelect.value,
+                        messages: [{ role: 'system', content: 'You are a helpful AI assistant.' }, ...conversationHistory],
+                        model: 'llama-3.1-8b-instant',
                         temperature: 0.7,
                         max_tokens: 4096,
                         stream: true
                     })
                 });
 
-                if (!response.ok) {
-                    const err = await response.text();
-                    throw new Error(err.includes('429') ? 'Rate limit reached – please wait a minute.' : err);
-                }
+                if (!res.ok) throw new Error(await res.text());
 
-                const reader = response.body.getReader();
+                const reader = res.body.getReader();
                 const decoder = new TextDecoder();
                 bubble.innerHTML = '';
 
                 while (true) {
                     const { done, value } = await reader.read();
                     if (done) break;
-
                     const chunk = decoder.decode(value);
                     const lines = chunk.split('\n');
                     for (const line of lines) {
@@ -291,8 +187,8 @@
                                 const data = JSON.parse(line.slice(6));
                                 const delta = data.choices[0]?.delta?.content;
                                 if (delta) {
-                                    aiReply += delta;
-                                    bubble.innerHTML = md.render(aiReply);
+                                    reply += delta;
+                                    bubble.innerHTML = md.render(reply);
                                     chatContainer.scrollTop = chatContainer.scrollHeight;
                                 }
                             } catch (e) {}
@@ -300,11 +196,11 @@
                     }
                 }
 
-                conversationHistory.push({ role: 'assistant', content: aiReply });
+                conversationHistory.push({ role: 'assistant', content: reply });
                 saveHistory();
-            } catch (error) {
-                if (error.name !== 'AbortError') {
-                    bubble.innerHTML = `<em style="color:#ff6666;">Error: ${error.message}</em>`;
+            } catch (err) {
+                if (err.name !== 'AbortError') {
+                    bubble.innerHTML = `<em style="color:#da3633;">Error: ${err.message}</em>`;
                 }
             } finally {
                 sendBtn.disabled = false;
@@ -315,7 +211,7 @@
         }
 
         function regenerateLast() {
-            if (conversationHistory.length < 2 || conversationHistory[conversationHistory.length-1].role !== 'assistant') return;
+            if (conversationHistory.length < 2) return;
             conversationHistory.pop();
             chatContainer.removeChild(chatContainer.lastChild);
             saveHistory();
@@ -324,7 +220,6 @@
 
         stopBtn.onclick = () => {
             if (currentController) currentController.abort();
-            currentAiMsg.querySelector('.bubble').innerHTML = '<em>Generation stopped by user.</em>';
             sendBtn.disabled = false;
             stopBtn.style.display = 'none';
             sendBtn.style.display = 'flex';
@@ -332,7 +227,7 @@
 
         function autoResize() {
             userInput.style.height = 'auto';
-            userInput.style.height = `${userInput.scrollHeight}px`;
+            userInput.style.height = userInput.scrollHeight + 'px';
         }
 
         sendBtn.onclick = sendMessage;
@@ -342,97 +237,26 @@
                 sendMessage();
             }
         });
-        userInput.addEventListener('input', () => {
-            autoResize();
-            localStorage.setItem('draftInput', userInput.value);
-        });
-        userInput.value = localStorage.getItem('draftInput') || '';
+        userInput.addEventListener('input', autoResize);
         autoResize();
 
         themeToggle.onclick = () => {
             const newTheme = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
             document.documentElement.dataset.theme = newTheme;
-            localStorage.setItem('aiTheme', newTheme);
+            localStorage.setItem('theme', newTheme);
             themeToggle.innerHTML = newTheme === 'dark' ? '<i class="fas fa-moon"></i>' : '<i class="fas fa-sun"></i>';
         };
 
         newChatBtn.onclick = () => {
-            if (confirm('Start a new conversation? Current chat will be saved.')) {
-                const newId = allChats.length;
-                const newChat = { id: newId, title: `Chat ${newId + 1}`, history: [] };
-                allChats.push(newChat);
-                loadChat(newId);
-                saveAllChats();
+            if (confirm('Start new chat? Current history will be cleared.')) {
+                conversationHistory = [];
+                saveHistory();
+                chatContainer.innerHTML = '';
             }
         };
-
-        voiceBtn.onclick = () => {
-            if (!('SpeechRecognition' in window || 'webkitSpeechRecognition' in window)) {
-                alert('Voice input not supported in your browser.');
-                return;
-            }
-            recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
-            recognition.lang = 'en-US';
-            recognition.interimResults = true;
-            recognition.start();
-            voiceBtn.style.color = var(--accent);
-            recognition.onresult = e => {
-                userInput.value = Array.from(e.results).map(result => result[0].transcript).join('');
-                autoResize();
-            };
-            recognition.onend = () => voiceBtn.style.color = var(--text-secondary);
-            recognition.onerror = () => {
-                alert('Voice input error. Try again.');
-                voiceBtn.style.color = var(--text-secondary);
-            };
-        };
-
-        exportBtn.onclick = () => {
-            const data = { chatId: currentChatId, title: allChats[currentChatId].title, history: conversationHistory };
-            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `ai-chat-${currentChatId + 1}.json`;
-            a.click();
-        };
-
-        shareBtn.onclick = () => {
-            const encoded = btoa(JSON.stringify(conversationHistory));
-            const shareUrl = `${window.location.origin}?chat=${encoded}`;
-            navigator.clipboard.writeText(shareUrl);
-            alert('Shareable link copied to clipboard!');
-        };
-
-        function loadChat(id) {
-            currentChatId = id;
-            conversationHistory = allChats[id].history.slice();
-            chatContainer.innerHTML = '';
-            conversationHistory.forEach(msg => addMessage(msg.role, msg.content, false));
-            renderHistory(allChats);
-            document.title = allChats[id].title || 'AI Assistant';
-        }
 
         function saveHistory() {
-            allChats[currentChatId].history = conversationHistory;
-            saveAllChats();
-        }
-
-        function saveAllChats() {
-            localStorage.setItem('aiPremiumChatHistory', JSON.stringify(conversationHistory));
-            localStorage.setItem('allChats', JSON.stringify(allChats));
-        }
-
-        // URL share support
-        const urlParams = new URLSearchParams(window.location.search);
-        if (urlParams.has('chat')) {
-            try {
-                const encoded = urlParams.get('chat');
-                const decoded = JSON.parse(atob(encoded));
-                conversationHistory = decoded;
-                chatContainer.innerHTML = '';
-                conversationHistory.forEach(msg => addMessage(msg.role, msg.content, false));
-            } catch (e) { console.error('Invalid shared chat'); }
+            localStorage.setItem('simpleChatHistory', JSON.stringify(conversationHistory));
         }
     </script>
 </body>
