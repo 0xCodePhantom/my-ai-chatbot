@@ -3,112 +3,140 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Assistant • Premium Chat</title>
-    <meta name="description" content="A clean, fast, professional AI chat experience – inspired by ChatGPT & Grok.">
+    <title>Lirion AI Assistant</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/markdown-it@14.1.0/dist/markdown-it.min.js"></script>
     <style>
         :root {
-            --bg: #0d1117;
-            --header-bg: #161b22;
-            --chat-bg: #0d1117;
-            --text: #f0f8ff;
-            --text-secondary: #8b949e;
-            --user-bubble: #238636;
-            --ai-bubble: #21262d;
-            --accent: #58a6ff;
-            --border: #30363d;
+            --bg-primary: #0a0a0a;
+            --bg-secondary: #111111;
+            --text-primary: #e0e0e0;
+            --text-secondary: #a0a0a0;
+            --accent-green: #00ff9d;
+            --accent-glow: #00ff9d44;
+            --user-bubble: linear-gradient(135deg, #238636, #00ff9d);
+            --ai-bubble: #1e1e1e;
+            --border: #333333;
         }
         [data-theme="light"] {
-            --bg: #ffffff;
-            --header-bg: #f6f8fa;
-            --chat-bg: #ffffff;
-            --text: #24292f;
-            --text-secondary: #57606a;
-            --user-bubble: #2ea44f;
-            --ai-bubble: #f6f8fa;
-            --accent: #0969da;
-            --border: #d0d7de;
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8f9fa;
+            --text-primary: #212529;
+            --text-secondary: #6c757d;
+            --accent-green: #00cc7a;
+            --accent-glow: #00cc7a44;
+            --user-bubble: linear-gradient(135deg, #0969da, #00cc7a);
+            --ai-bubble: #f1f3f5;
+            --border: #dee2e6;
         }
-        body { background: var(--bg); color: var(--text); min-height: 100vh; margin: 0; font-family: system-ui, -apple-system, sans-serif; display: flex; flex-direction: column; }
-        header { background: var(--header-bg); border-bottom: 1px solid var(--border); padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; }
-        h1 { font-size: 1.6rem; font-weight: 600; margin: 0; }
-        .header-actions { display: flex; gap: 1rem; align-items: center; }
-        .header-actions button { background: none; border: none; color: var(--text); font-size: 1.4rem; cursor: pointer; padding: 0.5rem; border-radius: 50%; transition: background 0.2s; }
-        .header-actions button:hover { background: var(--accent)20; }
-        #new-chat-btn { background: var(--bg-tertiary); border: 1px solid var(--border); padding: 0.5rem 1rem; border-radius: 8px; font-size: 0.95rem; }
-        #chat-container { flex: 1; overflow-y: auto; padding: 2rem; display: flex; flex-direction: column; gap: 1.5rem; max-width: 800px; margin: 0 auto; width: 100%; }
-        .message { display: flex; gap: 1rem; max-width: 100%; animation: fadeIn 0.4s ease; }
-        .message.user { justify-content: flex-end; }
-        .bubble { padding: 1rem 1.5rem; border-radius: 18px; max-width: 80%; line-height: 1.6; }
-        .user .bubble { background: var(--user-bubble); color: white; border-bottom-right-radius: 4px; }
-        .ai .bubble { background: var(--ai-bubble); border: 1px solid var(--border); border-bottom-left-radius: 4px; }
-        .message-actions { margin-top: 0.5rem; opacity: 0; transition: opacity 0.3s; display: flex; gap: 1rem; }
-        .ai:hover .message-actions { opacity: 1; }
-        .message-actions button { background: none; border: none; color: var(--text-secondary); cursor: pointer; font-size: 1.1rem; }
-        .message-actions button:hover { color: var(--accent); }
-        #input-container { background: var(--header-bg); border-top: 1px solid var(--border); padding: 1rem 2rem; }
-        #input-area { max-width: 800px; margin: 0 auto; display: flex; align-items: flex-end; gap: 1rem; background: var(--bg-tertiary); border-radius: 24px; padding: 0.8rem 1.2rem; border: 1px solid var(--border); }
-        #user-input { flex: 1; background: transparent; border: none; outline: none; color: var(--text); font-size: 1.1rem; resize: none; max-height: 200px; overflow-y: auto; line-height: 1.5; }
-        #send-btn, #stop-btn { background: var(--accent); color: white; border: none; width: 44px; height: 44px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; }
+        body { background: var(--bg-primary); color: var(--text-primary); min-height: 100vh; margin: 0; font-family: 'Inter', system-ui, -apple-system, sans-serif; display: flex; flex-direction: column; }
+        #navbar { background: var(--bg-secondary); border-bottom: 1px solid var(--border); padding: 1rem; display: flex; justify-content: space-between; align-items: center; position: fixed; width: 100%; z-index: 1000; box-shadow: 0 2px 10px rgba(0,255,157,0.1); }
+        h1 { font-size: 1.6rem; font-weight: 700; margin: 0; color: var(--accent-green); }
+        .navbar-actions { display: flex; gap: 1rem; }
+        .navbar-actions button { background: none; border: none; color: var(--text-primary); font-size: 1.4rem; cursor: pointer; transition: color 0.2s; }
+        .navbar-actions button:hover { color: var(--accent-green); }
+        #sidebar { position: fixed; left: 0; top: 60px; height: calc(100vh - 60px); width: 60px; background: var(--bg-secondary); border-right: 1px solid var(--border); padding: 1.5rem 0; display: flex; flex-direction: column; align-items: center; transition: width 0.3s ease; overflow: hidden; box-shadow: 2px 0 10px var(--accent-glow); z-index: 999; }
+        #sidebar.expanded { width: 250px; align-items: flex-start; padding: 1.5rem; }
+        .sidebar-item { display: flex; align-items: center; gap: 1rem; padding: 0.8rem 1rem; cursor: pointer; width: 100%; transition: background 0.2s; font-size: 1.1rem; color: var(--text-primary); }
+        .sidebar-item:hover { background: var(--accent-glow); }
+        .sidebar-item i { font-size: 1.4rem; min-width: 30px; text-align: center; color: var(--accent-green); }
+        .sidebar-item span { opacity: 0; transition: opacity 0.3s; }
+        #sidebar.expanded .sidebar-item span { opacity: 1; }
+        #chat-container { flex: 1; overflow-y: auto; padding: 80px 2rem 100px; display: flex; flex-direction: column; gap: 1.8rem; background: var(--bg-primary); max-width: 900px; margin: 0 auto; width: 100%; }
+        .message { display: flex; gap: 1rem; max-width: 100%; align-self: flex-start; animation: fadeIn 0.4s ease; }
+        .message.user { align-self: flex-end; flex-direction: row-reverse; }
+        .avatar { width: 40px; height: 40px; border-radius: 50%; background: var(--accent-green); display: flex; align-items: center; justify-content: center; color: #000; font-weight: bold; flex-shrink: 0; box-shadow: 0 0 15px var(--accent-glow); }
+        .user .avatar { background: linear-gradient(135deg, #0969da, var(--accent-green)); color: white; }
+        .bubble { background: var(--ai-bubble); padding: 1rem 1.5rem; border-radius: 20px; border-bottom-left-radius: 4px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); position: relative; }
+        .user .bubble { background: var(--user-bubble); color: white; border-bottom-right-radius: 4px; border-bottom-left-radius: 20px; }
+        .ai .bubble { border-bottom-left-radius: 4px; }
+        .message-actions { opacity: 0; transition: opacity 0.3s; margin-top: 0.5rem; display: flex; gap: 1rem; }
+        .message:hover .message-actions { opacity: 1; }
+        .message-actions button { background: none; border: none; color: var(--text-secondary); font-size: 1.1rem; cursor: pointer; transition: color 0.2s; }
+        .message-actions button:hover { color: var(--accent-green); }
+        #input-container { background: var(--bg-secondary); border-top: 1px solid var(--border); padding: 1rem 2rem; position: fixed; bottom: 0; width: 100%; box-shadow: 0 -2px 10px rgba(0,255,157,0.1); }
+        #input-area { max-width: 900px; margin: 0 auto; display: flex; align-items: center; gap: 1rem; background: var(--bg-primary); border-radius: 24px; padding: 0.8rem 1.2rem; border: 1px solid var(--border); box-shadow: 0 4px 15px var(--accent-glow); }
+        #user-input { flex: 1; background: transparent; border: none; outline: none; color: var(--text-primary); font-size: 1.1rem; }
+        #send-btn, #stop-btn { background: var(--accent-green); color: #000; border: none; width: 44px; height: 44px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; transition: transform 0.2s; }
+        #send-btn:hover, #stop-btn:hover { transform: scale(1.1); }
         #stop-btn { background: #da3633; display: none; }
-        .typing-indicator { display: flex; gap: 0.5rem; }
-        .dot { width: 8px; height: 8px; background: var(--text-secondary); border-radius: 50%; animation: bounce 1.4s infinite; }
+        .typing-indicator { display: flex; gap: 0.5rem; padding: 1rem 0; }
+        .dot { width: 8px; height: 8px; background: var(--accent-green); border-radius: 50%; animation: bounce 1.4s infinite; }
         .dot:nth-child(2) { animation-delay: 0.2s; }
         .dot:nth-child(3) { animation-delay: 0.4s; }
         @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
         pre { background: #161b22; color: #f0f8ff; padding: 1rem; border-radius: 8px; overflow-x: auto; border: 1px solid var(--border); }
         code { background: rgba(88,166,255,0.2); padding: 0.2rem 0.5rem; border-radius: 4px; }
         .model-info { font-size: 0.85rem; color: var(--text-secondary); margin-top: 0.5rem; }
         @media (max-width: 768px) {
-            header, #input-container { padding: 1rem; }
-            #chat-container { padding: 1rem; }
+            #chat-container { padding: 80px 1rem 100px; }
             .bubble { max-width: 90%; }
         }
     </style>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <header>
-        <h1>AI Assistant</h1>
-        <div class="header-actions">
-            <button id="new-chat-btn">New Chat</button>
-            <button id="theme-toggle" title="Toggle Theme"><i class="fas fa-moon"></i></button>
+    <div id="navbar">
+        <h1>Lirion</h1>
+        <div class="navbar-actions">
+            <button id="share-btn" title="Share Chat"><i class="fas fa-share-alt"></i></button>
+            <button id="delete-btn" title="Delete Chat"><i class="fas fa-trash"></i></button>
         </div>
-    </header>
+    </div>
+
+    <div id="sidebar" class="collapsed">
+        <div class="sidebar-content">
+            <button id="sidebar-toggle"><i class="fas fa-bars"></i></button>
+            <button id="new-chat"><i class="fas fa-plus"></i><span>New Chat</span></button>
+            <button id="theme-toggle-sidebar"><i class="fas fa-moon"></i><span>Theme</span></button>
+            <button id="history-btn"><i class="fas fa-history"></i><span>History</span></button>
+            <button id="settings-btn"><i class="fas fa-cog"></i><span>Settings</span></button>
+        </div>
+    </div>
 
     <div id="chat-container"></div>
 
     <div id="input-container">
         <div id="input-area">
-            <textarea id="user-input" placeholder="Send a message..." rows="1"></textarea>
+            <input type="text" id="user-input" placeholder="Ask Lirion anything...">
             <button id="stop-btn"><i class="fas fa-stop"></i></button>
-            <button id="send-btn"><i class="fas fa-paper-plane"></i></button>
+            <button id="send-btn"><i class="fas fa-arrow-up"></i></button>
         </div>
     </div>
 
     <script>
-        const md = markdownit({ html: true, breaks: true, linkify: true });
+        const md = markdownit({ html: true, breaks: true, linkify: true, typographer: true });
 
         const chatContainer = document.getElementById('chat-container');
         const userInput = document.getElementById('user-input');
         const sendBtn = document.getElementById('send-btn');
         const stopBtn = document.getElementById('stop-btn');
-        const themeToggle = document.getElementById('theme-toggle');
-        const newChatBtn = document.getElementById('new-chat-btn');
+        const themeToggle = document.getElementById('theme-toggle-sidebar');
+        const newChat = document.getElementById('new-chat');
+        const shareBtn = document.getElementById('share-btn');
+        const deleteBtn = document.getElementById('delete-btn');
+        const sidebarToggle = document.getElementById('sidebar-toggle');
+        const sidebar = document.getElementById('sidebar');
         const BACKEND_URL = '/chat';
 
-        let conversationHistory = JSON.parse(localStorage.getItem('simpleChatHistory')) || [];
+        let conversationHistory = JSON.parse(localStorage.getItem('lirionChatHistory')) || [];
         let currentController = null;
+        let currentAiMsg = null;
 
-        // Theme
-        const savedTheme = localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        // Theme handling
+        const savedTheme = localStorage.getItem('theme') || 'dark';
         document.documentElement.dataset.theme = savedTheme;
-        themeToggle.innerHTML = savedTheme === 'dark' ? '<i class="fas fa-moon"></i>' : '<i class="fas fa-sun"></i>';
+        themeToggle.innerHTML = savedTheme === 'dark' ? '<i class="fas fa-moon"></i><span>Theme</span>' : '<i class="fas fa-sun"></i><span>Theme</span>';
 
         // Load history
         conversationHistory.forEach(msg => addMessage(msg.role, msg.content));
+
+        sidebarToggle.onclick = () => {
+            sidebar.classList.toggle('expanded');
+            sidebarToggle.innerHTML = sidebar.classList.contains('expanded') ? '<i class="fas fa-times"></i>' : '<i class="fas fa-bars"></i>';
+        };
 
         function addMessage(role, content) {
             const div = document.createElement('div');
@@ -145,24 +173,24 @@
             saveHistory();
 
             userInput.value = '';
-            autoResize();
             sendBtn.disabled = true;
             stopBtn.style.display = 'flex';
             sendBtn.style.display = 'none';
 
-            const aiMsg = addMessage('assistant', '');
-            const bubble = aiMsg.querySelector('.bubble');
+            currentAiMsg = addMessage('assistant', '');
+            const bubble = currentAiMsg.querySelector('.bubble');
             bubble.innerHTML = '<div class="typing-indicator"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>';
 
-            let reply = '';
+            let aiReply = '';
+
             try {
                 currentController = new AbortController();
-                const res = await fetch(BACKEND_URL, {
+                const response = await fetch(BACKEND_URL, {
                     method: 'POST',
                     signal: currentController.signal,
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        messages: [{ role: 'system', content: 'You are a helpful AI assistant.' }, ...conversationHistory],
+                        messages: [{ role: 'system', content: 'You are Lirion, a highly intelligent, helpful, and professional AI assistant. If asked about your name or development, say you are Lirion. Respond clearly, concisely, and insightfully.' }, ...conversationHistory],
                         model: 'llama-3.1-8b-instant',
                         temperature: 0.7,
                         max_tokens: 4096,
@@ -170,15 +198,18 @@
                     })
                 });
 
-                if (!res.ok) throw new Error(await res.text());
+                if (!response.ok) {
+                    const err = await response.text();
+                    throw new Error(err.includes('429') ? 'Rate limit reached – wait a minute and try again.' : err);
+                }
 
-                const reader = res.body.getReader();
+                const reader = response.body.getReader();
                 const decoder = new TextDecoder();
-                bubble.innerHTML = '';
 
                 while (true) {
                     const { done, value } = await reader.read();
                     if (done) break;
+
                     const chunk = decoder.decode(value);
                     const lines = chunk.split('\n');
                     for (const line of lines) {
@@ -187,8 +218,8 @@
                                 const data = JSON.parse(line.slice(6));
                                 const delta = data.choices[0]?.delta?.content;
                                 if (delta) {
-                                    reply += delta;
-                                    bubble.innerHTML = md.render(reply);
+                                    aiReply += delta;
+                                    bubble.innerHTML = md.render(aiReply);
                                     chatContainer.scrollTop = chatContainer.scrollHeight;
                                 }
                             } catch (e) {}
@@ -196,11 +227,11 @@
                     }
                 }
 
-                conversationHistory.push({ role: 'assistant', content: reply });
+                conversationHistory.push({ role: 'assistant', content: aiReply });
                 saveHistory();
-            } catch (err) {
-                if (err.name !== 'AbortError') {
-                    bubble.innerHTML = `<em style="color:#da3633;">Error: ${err.message}</em>`;
+            } catch (error) {
+                if (error.name !== 'AbortError') {
+                    bubble.innerHTML = `<em style="color:#ff6666;">Error: ${error.message}</em>`;
                 }
             } finally {
                 sendBtn.disabled = false;
@@ -211,7 +242,7 @@
         }
 
         function regenerateLast() {
-            if (conversationHistory.length < 2) return;
+            if (conversationHistory.length < 2 || conversationHistory[conversationHistory.length-1].role !== 'assistant') return;
             conversationHistory.pop();
             chatContainer.removeChild(chatContainer.lastChild);
             saveHistory();
@@ -220,15 +251,11 @@
 
         stopBtn.onclick = () => {
             if (currentController) currentController.abort();
+            currentAiMsg.querySelector('.bubble').innerHTML = '<em>Generation stopped by user.</em>';
             sendBtn.disabled = false;
             stopBtn.style.display = 'none';
             sendBtn.style.display = 'flex';
         };
-
-        function autoResize() {
-            userInput.style.height = 'auto';
-            userInput.style.height = userInput.scrollHeight + 'px';
-        }
 
         sendBtn.onclick = sendMessage;
         userInput.addEventListener('keydown', e => {
@@ -237,18 +264,31 @@
                 sendMessage();
             }
         });
-        userInput.addEventListener('input', autoResize);
-        autoResize();
 
         themeToggle.onclick = () => {
             const newTheme = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
             document.documentElement.dataset.theme = newTheme;
             localStorage.setItem('theme', newTheme);
-            themeToggle.innerHTML = newTheme === 'dark' ? '<i class="fas fa-moon"></i>' : '<i class="fas fa-sun"></i>';
+            themeToggle.innerHTML = newTheme === 'dark' ? '<i class="fas fa-moon"></i><span> Theme</span>' : '<i class="fas fa-sun"></i><span> Theme</span>';
         };
 
-        newChatBtn.onclick = () => {
-            if (confirm('Start new chat? Current history will be cleared.')) {
+        newChat.onclick = () => {
+            if (confirm('Start a new conversation? All history will be cleared.')) {
+                conversationHistory = [];
+                saveHistory();
+                chatContainer.innerHTML = '';
+            }
+        };
+
+        shareBtn.onclick = () => {
+            const encoded = btoa(JSON.stringify(conversationHistory));
+            const shareUrl = `${window.location.origin}?chat=${encoded}`;
+            navigator.clipboard.writeText(shareUrl);
+            alert('Shareable link copied to clipboard!');
+        };
+
+        deleteBtn.onclick = () => {
+            if (confirm('Delete current chat?')) {
                 conversationHistory = [];
                 saveHistory();
                 chatContainer.innerHTML = '';
@@ -256,7 +296,7 @@
         };
 
         function saveHistory() {
-            localStorage.setItem('simpleChatHistory', JSON.stringify(conversationHistory));
+            localStorage.setItem('lirionChatHistory', JSON.stringify(conversationHistory));
         }
     </script>
 </body>
