@@ -4,25 +4,24 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#0a0a0a">
-    <title>AI Assistant • Premium Intelligent Chat</title>
+    <title>AI Assistant • DV</title>
     <meta name="description" content="A professional, ultra-fast AI chat platform for productive conversations. Powered by advanced models for insightful responses.">
-    <link rel="manifest" href="/manifest.json">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/markdown-it@14.1.0/dist/markdown-it.min.js"></script>
     <style>
         :root {
-            --bg-primary: #0a0a0a;
-            --bg-secondary: #111111;
-            --bg-tertiary: #1a1a1a;
-            --text-primary: #e0e0e0;
+            --bg-primary: #0f0f0f;
+            --bg-secondary: #171717;
+            --bg-tertiary: #1f1f1f;
+            --text-primary: #f0f0f0;
             --text-secondary: #a0a0a0;
             --accent: #00ff9d;
-            --accent-glow: #00ff9d44;
+            --accent-glow: rgba(0, 255, 157, 0.3);
             --user-bubble: linear-gradient(135deg, #238636, #00ff9d);
             --ai-bubble: #1e1e1e;
-            --border: #333333;
-            --shadow: rgba(0,0,0,0.4);
+            --border: #2d2d2d;
+            --shadow: rgba(0,0,0,0.5);
         }
         [data-theme="light"] {
             --bg-primary: #ffffff;
@@ -31,102 +30,107 @@
             --text-primary: #212529;
             --text-secondary: #6c757d;
             --accent: #00cc7a;
-            --accent-glow: #00cc7a44;
+            --accent-glow: rgba(0, 204, 122, 0.3);
             --user-bubble: linear-gradient(135deg, #0969da, #00cc7a);
             --ai-bubble: #f1f3f5;
             --border: #dee2e6;
             --shadow: rgba(0,0,0,0.1);
         }
-        body { background: var(--bg-primary); color: var(--text-primary); min-height: 100vh; margin: 0; font-family: 'Inter', system-ui, -apple-system, sans-serif; display: flex; flex-direction: column; transition: all 0.3s ease; }
-        .app-wrapper { flex: 1; display: flex; height: 100vh; }
-        #sidebar { width: 280px; background: var(--bg-secondary); border-right: 1px solid var(--border); padding: 1.5rem; display: flex; flex-direction: column; gap: 1rem; box-shadow: 4px 0 20px var(--shadow); z-index: 10; transition: width 0.3s ease; }
-        #sidebar.collapsed { width: 60px; padding: 1rem 0.5rem; }
-        #sidebar .sidebar-header { display: flex; align-items: center; gap: 1rem; }
-        #sidebar h2 { font-size: 1.2rem; margin: 0; }
-        #sidebar-toggle { background: none; border: none; color: var(--text-primary); font-size: 1.4rem; cursor: pointer; }
-        #history-list { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 0.5rem; }
-        .history-item { background: var(--bg-tertiary); padding: 0.8rem; border-radius: 12px; cursor: pointer; transition: background 0.2s; }
-        .history-item:hover { background: var(--accent-glow); }
-        .history-item.active { border: 1px solid var(--accent); }
-        .container-fluid { flex: 1; display: flex; flex-direction: column; padding: 0; }
-        header { background: var(--bg-secondary); border-bottom: 1px solid var(--border); padding: 1rem; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 20px var(--shadow); position: relative; }
-        header::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(90deg, transparent, var(--accent-glow), transparent); opacity: 0.5; }
-        h1 { font-size: 1.8rem; font-weight: 700; margin: 0; background: linear-gradient(90deg, #00ff9d, #00ccff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .header-actions button { background: none; border: none; color: var(--text-primary); font-size: 1.4rem; margin-left: 1rem; cursor: pointer; transition: transform 0.2s; }
-        .header-actions button:hover { transform: scale(1.1); }
-        #chat-container { flex: 1; overflow-y: auto; padding: 2rem; display: flex; flex-direction: column; gap: 1.8rem; background: var(--bg-primary); scrollbar-width: thin; scrollbar-color: var(--accent) var(--bg-primary); transition: padding 0.3s; }
-        .message { display: flex; gap: 1rem; max-width: 85%; align-self: flex-start; animation: fadeIn 0.4s ease; }
+        body { background: var(--bg-primary); color: var(--text-primary); min-height: 100vh; margin: 0; font-family: 'Inter', system-ui, -apple-system, sans-serif; display: flex; flex-direction: column; transition: background 0.4s ease; }
+        .app-container { display: flex; flex: 1; height: 100vh; overflow: hidden; }
+        #sidebar { width: 300px; background: var(--bg-secondary); border-right: 1px solid var(--border); padding: 1.5rem; display: flex; flex-direction: column; transition: width 0.3s ease; box-shadow: 4px 0 30px var(--shadow); }
+        #sidebar.collapsed { width: 0; padding: 0; overflow: hidden; }
+        .sidebar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
+        .sidebar-header h2 { font-size: 1.3rem; margin: 0; font-weight: 600; }
+        #sidebar-toggle { background: none; border: none; color: var(--text-primary); font-size: 1.4rem; cursor: pointer; padding: 0.5rem; border-radius: 50%; transition: background 0.2s; }
+        #sidebar-toggle:hover { background: var(--accent-glow); }
+        #search-history { width: 100%; padding: 0.8rem 1rem; border: 1px solid var(--border); border-radius: 12px; background: var(--bg-tertiary); color: var(--text-primary); margin-bottom: 1rem; font-size: 0.95rem; }
+        #history-list { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 0.6rem; }
+        .history-item { background: var(--bg-tertiary); padding: 0.9rem 1rem; border-radius: 14px; cursor: pointer; transition: all 0.2s; font-size: 0.95rem; }
+        .history-item:hover { background: var(--accent-glow); transform: translateY(-2px); }
+        .history-item.active { border: 2px solid var(--accent); background: var(--accent-glow); }
+        .sidebar-actions { display: flex; gap: 1rem; margin-top: 1rem; }
+        .sidebar-actions button { flex: 1; background: var(--bg-tertiary); border: none; color: var(--text-primary); padding: 0.8rem; border-radius: 12px; cursor: pointer; font-size: 0.9rem; transition: background 0.2s; }
+        .sidebar-actions button:hover { background: var(--accent-glow); }
+        .main-content { flex: 1; display: flex; flex-direction: column; }
+        header { background: var(--bg-secondary); border-bottom: 1px solid var(--border); padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 20px var(--shadow); }
+        h1 { font-size: 1.8rem; font-weight: 700; margin: 0; background: linear-gradient(90deg, var(--accent), #00ccff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .header-actions button { background: var(--bg-tertiary); border: 1px solid var(--border); color: var(--text-primary); padding: 0.6rem 1.2rem; border-radius: 12px; cursor: pointer; font-size: 0.95rem; transition: all 0.2s; }
+        .header-actions button:hover { background: var(--accent-glow); border-color: var(--accent); }
+        #chat-container { flex: 1; overflow-y: auto; padding: 2rem; display: flex; flex-direction: column; gap: 2rem; background: var(--bg-primary); }
+        .message { display: flex; gap: 1.2rem; max-width: 80%; align-self: flex-start; animation: fadeIn 0.5s ease; }
         .message.user { align-self: flex-end; flex-direction: row-reverse; }
-        .avatar { width: 44px; height: 44px; border-radius: 50%; background: var(--accent); display: flex; align-items: center; justify-content: center; font-weight: bold; color: #000; flex-shrink: 0; box-shadow: 0 0 20px var(--accent-glow); }
+        .avatar { width: 46px; height: 46px; border-radius: 50%; background: var(--accent); display: flex; align-items: center; justify-content: center; font-weight: bold; color: #000; flex-shrink: 0; box-shadow: 0 0 20px var(--accent-glow); }
         .user .avatar { background: linear-gradient(135deg, #0969da, var(--accent)); color: white; }
-        .bubble { background: var(--ai-bubble); padding: 1.2rem 1.8rem; border-radius: 26px; border-bottom-left-radius: 6px; box-shadow: 0 6px 20px var(--shadow); position: relative; }
-        .user .bubble { background: var(--user-bubble); color: white; border-bottom-right-radius: 6px; border-bottom-left-radius: 26px; }
+        .bubble { background: var(--ai-bubble); padding: 1.3rem 1.8rem; border-radius: 24px; border-bottom-left-radius: 6px; box-shadow: 0 6px 25px var(--shadow); position: relative; font-size: 1rem; line-height: 1.6; }
+        .user .bubble { background: var(--user-bubble); color: white; border-bottom-right-radius: 6px; border-bottom-left-radius: 24px; }
         .ai .bubble { border-bottom-left-radius: 6px; }
-        .message-actions { opacity: 0; transition: opacity 0.3s; margin-top: 0.6rem; display: flex; gap: 1rem; }
+        .message-actions { opacity: 0; transition: opacity 0.3s; margin-top: 0.8rem; display: flex; gap: 1rem; }
         .message:hover .message-actions { opacity: 1; }
         .message-actions button { background: none; border: none; color: var(--text-secondary); font-size: 1.2rem; cursor: pointer; transition: color 0.2s; }
         .message-actions button:hover { color: var(--accent); }
-        #input-container { background: var(--bg-secondary); border-top: 1px solid var(--border); padding: 1.2rem; box-shadow: 0 -4px 20px var(--shadow); }
-        #input-area { display: flex; align-items: center; gap: 1rem; background: var(--bg-primary); border-radius: 32px; padding: 1rem 1.4rem; border: 1px solid var(--border); box-shadow: 0 6px 25px var(--shadow); position: relative; }
-        #user-input { flex: 1; background: transparent; border: none; outline: none; color: var(--text-primary); font-size: 1.1rem; resize: none; max-height: 200px; overflow-y: auto; }
-        #voice-btn { background: transparent; border: none; color: var(--text-primary); font-size: 1.4rem; cursor: pointer; }
-        #send-btn, #stop-btn { background: var(--accent); color: #000; border: none; width: 52px; height: 52px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; transition: all 0.3s; box-shadow: 0 0 15px var(--accent-glow); }
-        #send-btn:hover, #stop-btn:hover { transform: scale(1.15); box-shadow: 0 0 25px var(--accent-glow); }
+        #input-container { background: var(--bg-secondary); border-top: 1px solid var(--border); padding: 1.2rem 2rem; box-shadow: 0 -4px 20px var(--shadow); }
+        #input-area { display: flex; align-items: flex-end; gap: 1rem; background: var(--bg-tertiary); border-radius: 32px; padding: 1rem 1.5rem; border: 1px solid var(--border); box-shadow: 0 6px 25px var(--shadow); max-width: 1000px; margin: 0 auto; }
+        #user-input { flex: 1; background: transparent; border: none; outline: none; color: var(--text-primary); font-size: 1.1rem; resize: none; max-height: 150px; overflow-y: auto; line-height: 1.5; }
+        #voice-btn { background: none; border: none; color: var(--text-secondary); font-size: 1.4rem; cursor: pointer; padding: 0.5rem; border-radius: 50%; transition: background 0.2s; }
+        #voice-btn:hover { background: var(--accent-glow); color: var(--accent); }
+        #send-btn, #stop-btn { background: var(--accent); color: #000; border: none; width: 52px; height: 52px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; transition: all 0.3s; box-shadow: 0 0 20px var(--accent-glow); }
+        #send-btn:hover, #stop-btn:hover { transform: scale(1.1); box-shadow: 0 0 30px var(--accent-glow); }
         #stop-btn { background: #ff4444; display: none; }
-        .typing-indicator { display: flex; gap: 0.6rem; padding: 1rem 0; }
-        .dot { width: 12px; height: 12px; background: var(--accent); border-radius: 50%; animation: typing 1.5s infinite; box-shadow: 0 0 10px var(--accent-glow); }
+        .typing-indicator { display: flex; gap: 0.7rem; padding: 1rem 0; }
+        .dot { width: 12px; height: 12px; background: var(--accent); border-radius: 50%; animation: typing 1.5s infinite; box-shadow: 0 0 12px var(--accent-glow); }
         .dot:nth-child(2) { animation-delay: 0.2s; }
         .dot:nth-child(3) { animation-delay: 0.4s; }
         @keyframes typing { 0%, 100% { opacity: 0.5; transform: translateY(0); } 50% { opacity: 1; transform: translateY(-12px); } }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
-        pre { background: #000; color: #00ff9d; padding: 1.2rem; border-radius: 14px; overflow-x: auto; border: 1px solid var(--accent); }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        pre { background: #000; color: var(--accent); padding: 1.2rem; border-radius: 14px; overflow-x: auto; border: 1px solid var(--border); }
         code { background: rgba(0,255,157,0.15); padding: 0.3rem 0.6rem; border-radius: 8px; }
-        .model-info { font-size: 0.85rem; color: var(--text-secondary); margin-top: 0.5rem; }
-        #search-history { width: 100%; padding: 0.8rem; border: 1px solid var(--border); border-radius: 12px; background: var(--bg-tertiary); color: var(--text-primary); margin-bottom: 1rem; }
-        #export-btn, #share-btn { background: none; border: none; color: var(--text-primary); font-size: 1.2rem; cursor: pointer; margin-left: 1rem; }
-        @media (max-width: 768px) { #sidebar { width: 0; padding: 0; overflow: hidden; } #sidebar.collapsed { width: 280px; } #chat-container { padding: 1rem; } }
+        .model-info { font-size: 0.85rem; color: var(--text-secondary); margin-top: 0.8rem; font-style: italic; }
+        @media (max-width: 992px) {
+            #sidebar { position: absolute; left: 0; top: 0; height: 100%; z-index: 100; }
+            #sidebar:not(.collapsed) { width: 300px; }
+            .main-content { margin-left: 0; }
+        }
+        @media (max-width: 768px) {
+            #chat-container { padding: 1.5rem; gap: 1.5rem; }
+            .message { max-width: 95%; }
+            #input-area { padding: 0.8rem 1rem; }
+        }
     </style>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="app-wrapper">
+    <div class="app-container">
         <div id="sidebar" class="collapsed">
             <div class="sidebar-header">
                 <h2>Chat History</h2>
-                <button id="sidebar-toggle"><i class="fas fa-bars"></i></button>
+                <button id="sidebar-toggle"><i class="fas fa-chevron-left"></i></button>
             </div>
             <input type="text" id="search-history" placeholder="Search chats...">
             <div id="history-list"></div>
-            <button id="export-btn" title="Export History"><i class="fas fa-download"></i> Export</button>
-            <button id="share-btn" title="Share Chat"><i class="fas fa-share-alt"></i> Share</button>
+            <div class="sidebar-actions">
+                <button id="export-btn"><i class="fas fa-download me-2"></i>Export</button>
+                <button id="share-btn"><i class="fas fa-share-alt me-2"></i>Share</button>
+            </div>
         </div>
-        <div class="container-fluid">
+
+        <div class="main-content">
             <header>
                 <h1>AI Assistant</h1>
                 <div class="header-actions">
-                    <button id="new-chat" class="btn btn-outline-light me-3">New Chat</button>
-                    <button id="theme-toggle" title="Toggle Theme"><i class="fas fa-moon"></i></button>
+                    <button id="new-chat">New Chat</button>
+                    <button id="theme-toggle"><i class="fas fa-moon"></i></button>
                 </div>
             </header>
 
             <div id="chat-container"></div>
 
             <div id="input-container">
-                <div class="row justify-content-center">
-                    <div class="col-lg-8 col-md-10">
-                        <select id="model-select" class="form-select mb-3">
-                            <option value="llama-3.1-8b-instant">Llama 3.1 8B Instant (Lightning Fast)</option>
-                            <option value="llama-3.3-70b-versatile">Llama 3.3 70B Versatile (Best Quality)</option>
-                            <option value="openai/gpt-oss-20b">GPT-OSS 20B (Modern & Balanced)</option>
-                            <option value="openai/gpt-oss-120b">GPT-OSS 120B (Flagship Intelligence)</option>
-                        </select>
-                        <div id="input-area">
-                            <button id="voice-btn" title="Voice Input"><i class="fas fa-microphone"></i></button>
-                            <textarea id="user-input" placeholder="Type your message or use voice..." rows="1"></textarea>
-                            <button id="stop-btn"><i class="fas fa-stop"></i></button>
-                            <button id="send-btn"><i class="fas fa-arrow-up"></i></button>
-                        </div>
-                    </div>
+                <div id="input-area">
+                    <button id="voice-btn" title="Voice Input"><i class="fas fa-microphone"></i></button>
+                    <textarea id="user-input" placeholder="Ask me anything..." rows="1"></textarea>
+                    <button id="stop-btn"><i class="fas fa-stop"></i></button>
+                    <button id="send-btn"><i class="fas fa-paper-plane"></i></button>
                 </div>
             </div>
         </div>
@@ -158,17 +162,21 @@
         let currentAiMsg = null;
         let recognition = null;
 
-        // Theme handling with system preference
+        // Theme handling
         const savedTheme = localStorage.getItem('aiTheme');
-        const systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-        document.documentElement.dataset.theme = savedTheme || systemDark;
-        themeToggle.innerHTML = document.documentElement.dataset.theme === 'dark' ? '<i class="fas fa-moon"></i>' : '<i class="fas fa-sun"></i>';
+        const systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const currentTheme = savedTheme || (systemDark ? 'dark' : 'light');
+        document.documentElement.dataset.theme = currentTheme;
+        themeToggle.innerHTML = currentTheme === 'dark' ? '<i class="fas fa-moon"></i>' : '<i class="fas fa-sun"></i>';
 
         // Load current chat
         loadChat(currentChatId);
 
         // Sidebar toggle
-        sidebarToggle.onclick = () => sidebar.classList.toggle('collapsed');
+        sidebarToggle.onclick = () => {
+            sidebar.classList.toggle('collapsed');
+            sidebarToggle.innerHTML = sidebar.classList.contains('collapsed') ? '<i class="fas fa-chevron-right"></i>' : '<i class="fas fa-chevron-left"></i>';
+        };
 
         // History search
         searchHistory.addEventListener('input', () => {
@@ -183,7 +191,7 @@
                 const item = document.createElement('div');
                 item.classList.add('history-item');
                 if (chat.id === currentChatId) item.classList.add('active');
-                item.textContent = chat.title;
+                item.textContent = chat.title || `Chat ${chat.id + 1}`;
                 item.onclick = () => loadChat(chat.id);
                 historyList.appendChild(item);
             });
@@ -216,11 +224,11 @@
             chatContainer.scrollTop = chatContainer.scrollHeight;
 
             if (role === 'assistant') {
-                msgDiv.querySelector('.fa-thumbs-up').onclick = () => alert('Feedback noted: Positive');
-                msgDiv.querySelector('.fa-thumbs-down').onclick = () => alert('Feedback noted: Negative');
+                msgDiv.querySelector('.fa-thumbs-up').onclick = () => alert('Thank you for the positive feedback!');
+                msgDiv.querySelector('.fa-thumbs-down').onclick = () => alert('Sorry, I'll improve next time.');
                 msgDiv.querySelector('.fa-copy').onclick = () => {
                     navigator.clipboard.writeText(content);
-                    alert('Response copied!');
+                    alert('Response copied to clipboard!');
                 };
                 msgDiv.querySelector('.fa-redo').onclick = regenerateLast;
             }
@@ -236,6 +244,7 @@
             saveHistory();
 
             userInput.value = '';
+            autoResize();
             sendBtn.disabled = true;
             stopBtn.style.display = 'flex';
             sendBtn.style.display = 'none';
@@ -263,7 +272,7 @@
 
                 if (!response.ok) {
                     const err = await response.text();
-                    throw new Error(err.includes('429') ? 'Rate limit reached – wait a minute and try again.' : err);
+                    throw new Error(err.includes('429') ? 'Rate limit reached – please wait a minute.' : err);
                 }
 
                 const reader = response.body.getReader();
@@ -321,6 +330,11 @@
             sendBtn.style.display = 'flex';
         };
 
+        function autoResize() {
+            userInput.style.height = 'auto';
+            userInput.style.height = `${userInput.scrollHeight}px`;
+        }
+
         sendBtn.onclick = sendMessage;
         userInput.addEventListener('keydown', e => {
             if (e.key === 'Enter' && !e.shiftKey) {
@@ -329,11 +343,11 @@
             }
         });
         userInput.addEventListener('input', () => {
-            userInput.style.height = 'auto';
-            userInput.style.height = `${userInput.scrollHeight}px`;
+            autoResize();
             localStorage.setItem('draftInput', userInput.value);
         });
         userInput.value = localStorage.getItem('draftInput') || '';
+        autoResize();
 
         themeToggle.onclick = () => {
             const newTheme = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
@@ -343,7 +357,7 @@
         };
 
         newChatBtn.onclick = () => {
-            if (confirm('Start a new conversation? All history will be cleared.')) {
+            if (confirm('Start a new conversation? Current chat will be saved.')) {
                 const newId = allChats.length;
                 const newChat = { id: newId, title: `Chat ${newId + 1}`, history: [] };
                 allChats.push(newChat);
@@ -353,50 +367,72 @@
         };
 
         voiceBtn.onclick = () => {
-            if (!recognition) recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+            if (!('SpeechRecognition' in window || 'webkitSpeechRecognition' in window)) {
+                alert('Voice input not supported in your browser.');
+                return;
+            }
+            recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
             recognition.lang = 'en-US';
+            recognition.interimResults = true;
             recognition.start();
-            recognition.onresult = e => userInput.value += e.results[0][0].transcript;
-            recognition.onerror = () => alert('Voice input error. Please try again.');
+            voiceBtn.style.color = var(--accent);
+            recognition.onresult = e => {
+                userInput.value = Array.from(e.results).map(result => result[0].transcript).join('');
+                autoResize();
+            };
+            recognition.onend = () => voiceBtn.style.color = var(--text-secondary);
+            recognition.onerror = () => {
+                alert('Voice input error. Try again.');
+                voiceBtn.style.color = var(--text-secondary);
+            };
         };
 
         exportBtn.onclick = () => {
-            const blob = new Blob([JSON.stringify(conversationHistory, null, 2)], { type: 'application/json' });
+            const data = { chatId: currentChatId, title: allChats[currentChatId].title, history: conversationHistory };
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = 'chat-history.json';
+            a.download = `ai-chat-${currentChatId + 1}.json`;
             a.click();
         };
 
         shareBtn.onclick = () => {
-            const encodedHistory = btoa(JSON.stringify(conversationHistory));
-            const shareUrl = `${window.location.origin}?history=${encodedHistory}`;
+            const encoded = btoa(JSON.stringify(conversationHistory));
+            const shareUrl = `${window.location.origin}?chat=${encoded}`;
             navigator.clipboard.writeText(shareUrl);
-            alert('Shareable link copied! Note: This is a temporary link for sharing.');
+            alert('Shareable link copied to clipboard!');
         };
 
         function loadChat(id) {
             currentChatId = id;
-            conversationHistory = allChats.find(chat => chat.id === id).history;
+            conversationHistory = allChats[id].history.slice();
             chatContainer.innerHTML = '';
-            conversationHistory.forEach(msg => addMessage(msg.role, msg.content));
+            conversationHistory.forEach(msg => addMessage(msg.role, msg.content, false));
             renderHistory(allChats);
+            document.title = allChats[id].title || 'AI Assistant';
         }
 
         function saveHistory() {
-            allChats.find(chat => chat.id === currentChatId).history = conversationHistory;
+            allChats[currentChatId].history = conversationHistory;
             saveAllChats();
         }
 
         function saveAllChats() {
-            localStorage.setItem('aiPremiumChatHistory', JSON.stringify(conversationHistory)); // For current
+            localStorage.setItem('aiPremiumChatHistory', JSON.stringify(conversationHistory));
             localStorage.setItem('allChats', JSON.stringify(allChats));
         }
 
-        // PWA support
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('/sw.js').catch(err => console.error('Service Worker registration failed:', err));
+        // URL share support
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.has('chat')) {
+            try {
+                const encoded = urlParams.get('chat');
+                const decoded = JSON.parse(atob(encoded));
+                conversationHistory = decoded;
+                chatContainer.innerHTML = '';
+                conversationHistory.forEach(msg => addMessage(msg.role, msg.content, false));
+            } catch (e) { console.error('Invalid shared chat'); }
         }
     </script>
 </body>
